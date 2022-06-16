@@ -175,27 +175,30 @@ function API()
 		const scope = this;
 		var fullResource = Object.assign({}, resource);
 
-		if(resource["owner"])
+		if(resource)
 		{
-			fullResource = scope.fullResource(allResources[fullResource["owner"]["rid"]], allResources);
-		}
-		else if(resource["type"] === "device" || resource["type"] === "room" || resource["type"] === "zone" || resource["type"] === "bridge_home")
-		{
-			// RESOLVE SERVICES
-			var allServices = {};
-
-			for (var i = resource["services"].length - 1; i >= 0; i--)
+			if(resource["owner"])
 			{
-				const targetService = resource["services"][i];
-				const targetType = targetService["rtype"];
-				const targetID = targetService["rid"];
-
-				if(!allServices[targetType]) { allServices[targetType] = {}; }
-				allServices[targetType][targetID] = Object.assign({}, allResources[targetID]);
+				fullResource = scope.fullResource(allResources[fullResource["owner"]["rid"]], allResources);
 			}
+			else if(resource["type"] === "device" || resource["type"] === "room" || resource["type"] === "zone" || resource["type"] === "bridge_home")
+			{
+				// RESOLVE SERVICES
+				var allServices = {};
 
-			// REPLACE SERVICES
-			fullResource["services"] = allServices;
+				for (var i = resource["services"].length - 1; i >= 0; i--)
+				{
+					const targetService = resource["services"][i];
+					const targetType = targetService["rtype"];
+					const targetID = targetService["rid"];
+
+					if(!allServices[targetType]) { allServices[targetType] = {}; }
+					allServices[targetType][targetID] = Object.assign({}, allResources[targetID]);
+				}
+
+				// REPLACE SERVICES
+				fullResource["services"] = allServices;
+			}
 		}
 
 		return fullResource;
